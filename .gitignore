@@ -1,5 +1,5 @@
 # Imported assets
-/[Aa]ssets/Imported*
+/[Aa]ssets/Imported/*
 
 # This .gitignore file should be placed at the root of your Unity project directory
 #
