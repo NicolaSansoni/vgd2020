@@ -12,12 +12,15 @@ public class CameraController : MonoBehaviour
     public Vector2 angularVelocity = new Vector2(60f, 60f);
     private Camera cam;
     private Vector3 posBias;
+    private Transform rig2;
 
     // Start is called before the first frame update
     void Start()
     {
-        cam = GetComponentInChildren<Camera>();
         posBias = transform.position;
+        
+        cam = GetComponentInChildren<Camera>();
+        rig2 = transform.GetChild(0);
     }
 
     void Update()
@@ -28,8 +31,16 @@ public class CameraController : MonoBehaviour
         // position
         transform.position = target.position + posBias;
 
-        // rotation
+        /* rotation */
         Vector2 rotation = Vector2.Scale(input.getCameraMovement(), angularVelocity) * Time.deltaTime;
+        /* x */
         transform.Rotate(0f, rotation.x, 0f);
+        /* y */
+        float pitch = rig2.localEulerAngles.x;
+        // 180° == -180°, 
+        if (pitch > 180f) pitch -= 360f;
+        // don't go over the vertical plane
+        pitch = Mathf.Clamp(pitch + rotation.y, -90f, 90f);
+        rig2.localEulerAngles = new Vector3(pitch, 0f, 0f);
     }
 }

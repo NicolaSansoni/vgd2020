@@ -39,7 +39,7 @@ public class InputHandler : MonoBehaviour
         // get the difference between desired speed and the current one
         Vector2 jcMovTarget = new Vector2(
             Input.GetAxis("Joystick X"),
-            Input.GetAxis("Joystick Y")
+            -Input.GetAxis("Joystick Y")
         );
         Vector2 jcMovDiff = jcMovTarget - jCamMov;
         // calculate the costraints for the velocity in this frame
@@ -47,11 +47,11 @@ public class InputHandler : MonoBehaviour
         if (joystickCameraDelay > 0) {
             jcClamp *= Time.deltaTime / joystickCameraDelay;
         }
-        // if we are changing direction widen the constraints for better feel
-        if (jcMovTarget.x * jCamMov.x < 0) {
+        // if we are changing direction or stopping widen the constraints for better feel
+        if (jcMovTarget.x * jCamMov.x <= 0) {
             jcClamp.x *= 2;
         }
-        if (jcMovTarget.y * jCamMov.y < 0) {
+        if (jcMovTarget.y * jCamMov.y <= 0) {
             jcClamp.y *= 2;
         }
         // clamp and apply sens

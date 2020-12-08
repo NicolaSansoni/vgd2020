@@ -45,8 +45,11 @@ public class MovementHandler : MonoBehaviour
         planeVel = Vector3.ProjectOnPlane(rb.velocity, Physics.gravity);
         Vector3 velTarget = movInput * maxSpeed;
         // align with the camera
-        velTarget = pointOfView.TransformDirection(velTarget);
-        velTarget = Vector3.ProjectOnPlane(velTarget, Physics.gravity);
+        Vector3 fwd = Vector3.ProjectOnPlane(pointOfView.forward, Physics.gravity);
+        if (fwd.Equals(Vector3.zero)) {
+            fwd = Vector3.ProjectOnPlane(pointOfView.up, Physics.gravity);
+        }
+        velTarget = Quaternion.FromToRotation(Vector3.forward, fwd) * velTarget;
         
         Vector3 velDiff = velTarget - planeVel;
         // clamp instead of normalize to handle standing still correctly
