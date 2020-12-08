@@ -40,7 +40,7 @@ public class CameraController : MonoBehaviour
         // 180° == -180°, 
         if (pitch > 180f) pitch -= 360f;
         // don't go over the vertical plane
-        pitch = Mathf.Clamp(pitch + rotInput.y, -90f, 90f);
+        pitch = Mathf.Clamp(pitch + rotInput.y, -89f, 89f);
         rig2.localEulerAngles = new Vector3(pitch, 0f, 0f);
     }
 }
