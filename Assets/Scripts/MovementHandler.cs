@@ -4,21 +4,23 @@ using UnityEngine;
 
 public class MovementHandler : MonoBehaviour
 {
+    public InputHandler input;
     public float jumpSpeed = 5f;
+    public float maxSpeed = 6f;
     public float acceleration = 10f;
+    public float rotXSec = 2f;
 
     private Rigidbody rb;
-    private InputHandler input;
     private Vector3 movInput;
     private bool jmpInput;
+    private Vector3 planeVel;
 
-    // Start is called before the first frame update
     void Start()
     {
-        input = GetComponent<InputHandler>();
         rb = GetComponent<Rigidbody>();
         movInput = new Vector3();
         jmpInput = false;
+        planeVel = Vector3.zero;
     }
 
     private void Update() {
@@ -29,15 +31,23 @@ public class MovementHandler : MonoBehaviour
             jmpInput = true;
         }
 
-        Vector3 forward = Vector3.ProjectOnPlane(rb.velocity, Physics.gravity);
-        if (forward.magnitude < 0.1f) forward = transform.forward;
-        transform.rotation = Quaternion.LookRotation(forward, -Physics.gravity);
+        // keep char facing forward when moving, smooth the rotation
+        if (planeVel.magnitude > 0.1f) {
+            Quaternion fwdRot = Quaternion.LookRotation(planeVel, -Physics.gravity);
+            fwdRot = Quaternion.RotateTowards(transform.rotation, fwdRot, 360f * rotXSec * Time.deltaTime);
+            transform.rotation = fwdRot;
+        }
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        rb.AddForce(movInput * acceleration, ForceMode.Acceleration);
+        planeVel = Vector3.ProjectOnPlane(rb.velocity, Physics.gravity);
+        Vector3 velTarget = movInput * maxSpeed;
+        Vector3 velDiff = velTarget - planeVel;
+        // clamp instead of normalize to handle standing still correctly
+        Vector3 accelVect = Vector3.ClampMagnitude(velDiff, 1f) * acceleration;
+        rb.AddForce(accelVect, ForceMode.Acceleration);
+
         if (jmpInput) {
             Jump();
             jmpInput = false;
@@ -51,13 +61,14 @@ public class MovementHandler : MonoBehaviour
     }
 
     public float getSpeed() {
-        return Vector3.ProjectOnPlane(rb.velocity, Physics.gravity).magnitude;
+        return planeVel.magnitude;
     }
     public bool getJump() {
         return jmpInput;
     }
     public bool getGrounded() {
         float margin = 0.1f;
+        // ray needs to start above the ground because if it starts inside no hit is registered
         Vector3 feetPos = transform.position - Physics.gravity.normalized * margin / 2;
         return Physics.Raycast(feetPos, Physics.gravity, margin);
     }
