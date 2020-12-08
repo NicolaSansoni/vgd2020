@@ -32,15 +32,15 @@ public class CameraController : MonoBehaviour
         transform.position = target.position + posBias;
 
         /* rotation */
-        Vector2 rotation = Vector2.Scale(input.getCameraMovement(), angularVelocity) * Time.deltaTime;
+        Vector2 rotInput = Vector2.Scale(input.getCameraMovement(), angularVelocity) * Time.deltaTime;
         /* x */
-        transform.Rotate(0f, rotation.x, 0f);
+        transform.RotateAround(transform.position, transform.up, rotInput.x);
         /* y */
         float pitch = rig2.localEulerAngles.x;
         // 180° == -180°, 
         if (pitch > 180f) pitch -= 360f;
         // don't go over the vertical plane
-        pitch = Mathf.Clamp(pitch + rotation.y, -90f, 90f);
+        pitch = Mathf.Clamp(pitch + rotInput.y, -90f, 90f);
         rig2.localEulerAngles = new Vector3(pitch, 0f, 0f);
     }
 }

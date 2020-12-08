@@ -348,7 +348,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   input: {fileID: 2037350860}
   target: {fileID: 264089612}
-  angularVelocity: {x: 180, y: 180}
+  angularVelocity: {x: 180, y: 90}
 --- !u!4 &637940753
 Transform:
   m_ObjectHideFlags: 0
