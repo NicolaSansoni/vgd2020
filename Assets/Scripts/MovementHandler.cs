@@ -5,6 +5,7 @@ using UnityEngine;
 public class MovementHandler : MonoBehaviour
 {
     public InputHandler input;
+    public Transform pointOfView;
     public float jumpSpeed = 5f;
     public float maxSpeed = 6f;
     public float acceleration = 10f;
@@ -43,6 +44,10 @@ public class MovementHandler : MonoBehaviour
     {
         planeVel = Vector3.ProjectOnPlane(rb.velocity, Physics.gravity);
         Vector3 velTarget = movInput * maxSpeed;
+        // align with the camera
+        velTarget = pointOfView.TransformDirection(velTarget);
+        velTarget = Vector3.ProjectOnPlane(velTarget, Physics.gravity);
+        
         Vector3 velDiff = velTarget - planeVel;
         // clamp instead of normalize to handle standing still correctly
         Vector3 accelVect = Vector3.ClampMagnitude(velDiff, 1f) * acceleration;
