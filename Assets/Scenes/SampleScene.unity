@@ -201,7 +201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   input: {fileID: 2037350860}
-  pointOfView: {fileID: 963194228}
+  pointOfView: {fileID: 637940753}
   jumpSpeed: 5
   maxSpeed: 6
   acceleration: 20
