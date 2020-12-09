@@ -32,24 +32,33 @@ public class CameraController : MonoBehaviour
         /* rotation */
         // TODO: ALIGN INPUT WITH CAMERA
         Vector2 rotInput = Vector2.Scale(input.getCameraMovement(), angularVelocity) * Time.deltaTime;
-        /* yaw */
+        /* axes */
         Vector3 yAxis = -Physics.gravity.normalized;
-        transform.RotateAround(transform.position, yAxis, rotInput.x);
-        /* pitch */
         Vector3 xAxis = Vector3.Cross(yAxis, transform.forward);
-        Debug.DrawRay(transform.position, transform.up, Color.red);
         if (Vector3.Dot(transform.up, yAxis) < 0f) {
             xAxis *= -1;
         }
         xAxis.Normalize();
-        Debug.DrawRay(transform.position, transform.forward, Color.yellow);
         
+        /* draw axes for debug */
+        Debug.DrawRay(transform.position, transform.up, Color.red);
+        Debug.DrawRay(transform.position, transform.forward, Color.yellow);
         Debug.DrawRay(transform.position, yAxis, Color.blue);
+        Debug.DrawRay(transform.position, xAxis, Color.green);
+        Debug.DrawRay(transform.position, transform.right, Color.cyan);
+
+        /* align input */
+        float rotInputAngle = Vector3.SignedAngle(xAxis, transform.right, transform.forward) * Mathf.Deg2Rad;
+        rotInput = new Vector2(
+            rotInput.x * Mathf.Cos(rotInputAngle) - rotInput.y * Mathf.Sin(rotInputAngle),
+            rotInput.x * Mathf.Sin(rotInputAngle) + rotInput.y * Mathf.Cos(rotInputAngle) 
+        );
+
+        /* pitch */
         float pitch = Vector3.SignedAngle(yAxis, transform.forward, xAxis);
         if (Mathf.Approximately(pitch % 180f, 0)) {
             xAxis = transform.right;
         }
-        Debug.DrawRay(transform.position, xAxis, Color.green);
         Debug.Log(pitch);
         // don't go over the vertical plane unless you are already over
         if (pitch >= 0f && pitch <= 180f) {
@@ -57,7 +66,9 @@ public class CameraController : MonoBehaviour
         } else {
             rotInput.y = Mathf.Clamp(rotInput.y, -180f - pitch, 0 - pitch);
         }
-        
         transform.RotateAround(transform.position, xAxis, rotInput.y);
+
+        /* yaw */
+        transform.RotateAround(transform.position, yAxis, rotInput.x);
     }
 }
