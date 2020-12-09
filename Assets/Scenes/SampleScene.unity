@@ -201,7 +201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   input: {fileID: 2037350860}
-  pointOfView: {fileID: 1203416731}
+  pointOfView: {fileID: 963194228}
   jumpSpeed: 5
   maxSpeed: 6
   acceleration: 20
@@ -613,6 +613,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1203416731}
+  - component: {fileID: 1203416732}
   m_Layer: 0
   m_Name: CameraRig2
   m_TagString: Untagged
@@ -635,6 +636,19 @@ Transform:
   m_Father: {fileID: 637940753}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1203416732
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1203416730}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!850595691 &1899590811
 LightingSettings:
   m_ObjectHideFlags: 0

@@ -45,7 +45,7 @@ public class MovementHandler : MonoBehaviour
         planeVel = Vector3.ProjectOnPlane(rb.velocity, Physics.gravity);
         Vector3 velTarget = movInput * maxSpeed;
         // align with the camera
-        Quaternion camUpRot = Quaternion.FromToRotation(pointOfView.up, -Physics.gravity);
+        Quaternion camUpRot = Quaternion.FromToRotation(pointOfView.up, Vector3.up);
         Vector3 camFwd = camUpRot * pointOfView.forward;
         Quaternion fwdRot = Quaternion.FromToRotation(Vector3.forward, camFwd);
         Quaternion upRot = Quaternion.FromToRotation(Vector3.up, -Physics.gravity);

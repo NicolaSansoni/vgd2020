@@ -12,7 +12,7 @@ public class CameraController : MonoBehaviour
     public Vector2 angularVelocity = new Vector2(60f, 60f);
     private Camera cam;
     private Vector3 posBias;
-    private Transform rig2;
+    private Transform rigArm;
 
     // Start is called before the first frame update
     void Start()
@@ -20,7 +20,7 @@ public class CameraController : MonoBehaviour
         posBias = transform.position;
         
         cam = GetComponentInChildren<Camera>();
-        rig2 = transform.GetChild(0);
+        rigArm = transform.GetChild(0);
     }
 
     void Update()
@@ -33,14 +33,23 @@ public class CameraController : MonoBehaviour
 
         /* rotation */
         Vector2 rotInput = Vector2.Scale(input.getCameraMovement(), angularVelocity) * Time.deltaTime;
-        /* x */
-        transform.RotateAround(transform.position, transform.up, rotInput.x);
-        /* y */
-        float pitch = rig2.localEulerAngles.x;
+        /* yaw */
+        Vector3 yAxis = -Physics.gravity.normalized;
+        transform.RotateAround(transform.position, yAxis, rotInput.x);
+        /* pitch */
+        // TODO: FIX VERTICAL PITCH ISSUES (±90°)
+        Vector3 xAxis = Vector3.Cross(rigArm.forward, yAxis);
+        Vector3 projection = Vector3.ProjectOnPlane(rigArm.rotation * yAxis, xAxis);
+        float pitch = Mathf.Acos(Vector3.Dot(projection, yAxis)) * Mathf.Rad2Deg;
         // 180° == -180°, 
         if (pitch > 180f) pitch -= 360f;
-        // don't go over the vertical plane
-        pitch = Mathf.Clamp(pitch + rotInput.y, -89f, 89f);
-        rig2.localEulerAngles = new Vector3(pitch, 0f, 0f);
+        if (pitch < -180f) pitch += 360f;
+        // don't go over the vertical plane unless you are already over
+        float constraint = 90f;
+        if (pitch < -constraint || pitch > constraint) {
+            constraint = 360f;
+        }
+        pitch = Mathf.Clamp(pitch + rotInput.y, -constraint, constraint) - pitch;
+        rigArm.RotateAround(rigArm.position, xAxis, pitch);
     }
 }
