@@ -6,9 +6,9 @@ public class MovementHandler : MonoBehaviour
 {
     public InputHandler input;
     public Transform pointOfView;
-    public float jumpSpeed = 5f;
+    public float jumpHeight = 3f;
     public float maxSpeed = 6f;
-    public float acceleration = 10f;
+    public float acceleration = 20f;
     public float rotXSec = 2f;
 
     private Rigidbody rb;
@@ -57,22 +57,23 @@ public class MovementHandler : MonoBehaviour
         rb.AddForce(accelVect, ForceMode.Acceleration);
 
         if (jmpInput) {
-            Jump();
+            if (getGrounded()){
+                Jump();
+            }
             jmpInput = false;
         }
     }
 
     private void Jump() {
-        Vector3 v = rb.velocity;
-        v.y = jumpSpeed;
-        rb.velocity = v;
+        float jumpSpeed = Mathf.Sqrt(jumpHeight * 2f * Physics.gravity.magnitude);
+        rb.velocity = planeVel + -Physics.gravity.normalized * jumpSpeed;
     }
 
     public float getSpeed() {
         return planeVel.magnitude;
     }
     public bool getJump() {
-        return jmpInput;
+        return jmpInput && getGrounded();
     }
     public bool getGrounded() {
         float margin = 0.1f;

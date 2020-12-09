@@ -202,7 +202,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   input: {fileID: 2037350860}
   pointOfView: {fileID: 637940753}
-  jumpSpeed: 5
+  jumpHeight: 3
   maxSpeed: 6
   acceleration: 20
   rotXSec: 2
