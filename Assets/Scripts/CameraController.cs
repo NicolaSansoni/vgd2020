@@ -36,25 +36,28 @@ public class CameraController : MonoBehaviour
         Vector3 yAxis = -Physics.gravity.normalized;
         transform.RotateAround(transform.position, yAxis, rotInput.x);
         /* pitch */
-        Vector3 xAxis = Vector3.Cross(transform.forward, yAxis);
+        Vector3 xAxis = Vector3.Cross(yAxis, transform.forward);
+        Debug.DrawRay(transform.position, transform.up, Color.red);
         if (Vector3.Dot(transform.up, yAxis) < 0f) {
             xAxis *= -1;
         }
-        if (xAxis.sqrMagnitude < 0.1f) {
-            //TODO: THIS DOESN'T FIX THE MESSED UP ROTATION AS I'D LIKE
-            xAxis = Vector3.Cross(yAxis, transform.up);
-            if (Vector3.Dot(yAxis, transform.forward) < 0f) {
-                xAxis *= -1;
-            }
-        }
         xAxis.Normalize();
-        float pitch = Vector3.SignedAngle(transform.forward, yAxis, xAxis);
+        Debug.DrawRay(transform.position, transform.forward, Color.yellow);
+        
+        Debug.DrawRay(transform.position, yAxis, Color.blue);
+        float pitch = Vector3.SignedAngle(yAxis, transform.forward, xAxis);
+        if (Mathf.Approximately(pitch % 180f, 0)) {
+            xAxis = transform.right;
+        }
+        Debug.DrawRay(transform.position, xAxis, Color.green);
         Debug.Log(pitch);
         // don't go over the vertical plane unless you are already over
         if (pitch >= 0f && pitch <= 180f) {
-            //TODO: THIS DOESN'T LOCK IF ROTATION IS MESSED UP
-            rotInput.y = Mathf.Clamp(rotInput.y, pitch - 180f, pitch);
+            rotInput.y = Mathf.Clamp(rotInput.y, 0f - pitch, 180f - pitch);
+        } else {
+            rotInput.y = Mathf.Clamp(rotInput.y, -180f - pitch, 0 - pitch);
         }
+        
         transform.RotateAround(transform.position, xAxis, rotInput.y);
     }
 }
