@@ -30,7 +30,6 @@ public class CameraController : MonoBehaviour
         transform.position = target.position + posBias;
 
         /* rotation */
-        // TODO: ALIGN INPUT WITH CAMERA
         Vector2 rotInput = Vector2.Scale(input.getCameraMovement(), angularVelocity) * Time.deltaTime;
         /* axes */
         Vector3 yAxis = -Physics.gravity.normalized;
@@ -39,13 +38,6 @@ public class CameraController : MonoBehaviour
             xAxis *= -1;
         }
         xAxis.Normalize();
-        
-        /* draw axes for debug */
-        Debug.DrawRay(transform.position, transform.up, Color.red);
-        Debug.DrawRay(transform.position, transform.forward, Color.yellow);
-        Debug.DrawRay(transform.position, yAxis, Color.blue);
-        Debug.DrawRay(transform.position, xAxis, Color.green);
-        Debug.DrawRay(transform.position, transform.right, Color.cyan);
 
         /* align input */
         float rotInputAngle = Vector3.SignedAngle(xAxis, transform.right, transform.forward) * Mathf.Deg2Rad;
@@ -59,7 +51,7 @@ public class CameraController : MonoBehaviour
         if (Mathf.Approximately(pitch % 180f, 0)) {
             xAxis = transform.right;
         }
-        Debug.Log(pitch);
+        
         // don't go over the vertical plane unless you are already over
         if (pitch >= 0f && pitch <= 180f) {
             rotInput.y = Mathf.Clamp(rotInput.y, 0f - pitch, 180f - pitch);
