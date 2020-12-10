@@ -10,18 +10,28 @@ public class MovementHandler : MonoBehaviour
     public float maxSpeed = 6f;
     public float acceleration = 20f;
     public float rotXSec = 2f;
+    public float maxSlope = 50f;
 
     private Rigidbody rb;
+    private Collider feet;
+    private ContactPoint[] contacts;
     private Vector3 movInput;
     private bool jmpInput;
     private Vector3 planeVel;
+    private bool isGrounded;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        contacts = new ContactPoint[10];
+        for (int i = 0; i < contacts.Length; i++) {
+            contacts[i] = new ContactPoint();
+        }
         movInput = new Vector3();
         jmpInput = false;
         planeVel = Vector3.zero;
+        feet = transform.Find("Base").gameObject.GetComponent<Collider>();
+        isGrounded = false;
     }
 
     private void Update() {
@@ -76,9 +86,34 @@ public class MovementHandler : MonoBehaviour
         return jmpInput && getGrounded();
     }
     public bool getGrounded() {
-        float margin = 0.1f;
-        // ray needs to start above the ground because if it starts inside no hit is registered
-        Vector3 feetPos = transform.position - Physics.gravity.normalized * margin / 2;
-        return Physics.Raycast(feetPos, Physics.gravity, margin);
+        return isGrounded;
+    }
+
+    private void OnCollisionEnter(Collision other) {
+        int nCollisions = other.GetContacts(contacts);
+        for (int i = 0; i < nCollisions; i++) {
+            if (contacts[i].thisCollider.Equals(feet) &&
+                !contacts[i].otherCollider.CompareTag("Character") &&
+                Vector3.Angle(contacts[i].normal, -Physics.gravity) < maxSlope) {
+
+                Debug.Log(contacts[i].otherCollider);
+                isGrounded = true;
+            }
+        }
+    }
+    private void OnCollisionStay(Collision other) {
+        int nCollisions = other.GetContacts(contacts);
+        for (int i = 0; i < nCollisions; i++) {
+            if (contacts[i].thisCollider.Equals(feet) &&
+                !(contacts[i].otherCollider.CompareTag("Character")) &&
+                Vector3.Angle(contacts[i].normal, -Physics.gravity) < maxSlope) {
+
+                Debug.Log(contacts[i].otherCollider);
+                isGrounded = true;
+            }
+        }
+    }
+    private void OnCollisionExit(Collision other) {
+        isGrounded = false;
     }
 }
