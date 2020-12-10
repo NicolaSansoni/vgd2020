@@ -39,7 +39,7 @@ public class InputHandler : MonoBehaviour
         // get the difference between desired speed and the current one
         Vector2 jcMovTarget = new Vector2(
             Input.GetAxis("Joystick X"),
-            -Input.GetAxis("Joystick Y")
+            Input.GetAxis("Joystick Y")
         );
         Vector2 jcMovDiff = jcMovTarget - jCamMov;
         // calculate the costraints for the velocity in this frame

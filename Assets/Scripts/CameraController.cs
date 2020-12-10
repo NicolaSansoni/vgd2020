@@ -31,6 +31,7 @@ public class CameraController : MonoBehaviour
 
         /* rotation */
         Vector2 rotInput = Vector2.Scale(input.getCameraMovement(), angularVelocity) * Time.deltaTime;
+        rotInput.y *= -1f;
         /* axes */
         Vector3 yAxis = -Physics.gravity.normalized;
         Vector3 xAxis = Vector3.Cross(yAxis, transform.forward);
