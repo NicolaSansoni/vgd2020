@@ -11,29 +11,31 @@ public class CameraController : MonoBehaviour
     [Tooltip("In degrees per second")]
     public Vector2 angularVelocity = new Vector2(60f, 60f);
     private Camera cam;
+    private GravityHandler gravity;
     private Vector3 posBias;
 
     // Start is called before the first frame update
     void Start()
     {
-        posBias = transform.position;
-        
         cam = GetComponentInChildren<Camera>();
+        gravity = target.GetComponent<GravityHandler>();
+
+        posBias = transform.position;
     }
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
         // The camera doesn't need to be perfectly deterministic but needs to be
         // as smooth as possible so it is handled in Update, not in FixedUpdate
 
         // position
-        transform.position = target.position + posBias;
+        transform.position = target.position + Quaternion.FromToRotation(Vector3.down, gravity.get()) * posBias;
 
         /* rotation */
-        Vector2 rotInput = Vector2.Scale(input.getCameraMovement(), angularVelocity) * Time.deltaTime;
+        Vector2 rotInput = Vector2.Scale(input.getCameraMovement(), angularVelocity) * Time.fixedDeltaTime;
         rotInput.y *= -1f;
         /* axes */
-        Vector3 yAxis = -Physics.gravity.normalized;
+        Vector3 yAxis = -gravity.get().normalized;
         Vector3 xAxis = Vector3.Cross(yAxis, transform.forward);
         if (Vector3.Dot(transform.up, yAxis) < 0f) {
             xAxis *= -1;

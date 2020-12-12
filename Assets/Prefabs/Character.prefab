@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1139278267771143517}
   - component: {fileID: 1139278267771143513}
   - component: {fileID: 1139278267771143515}
+  - component: {fileID: 6968225451657145166}
   m_Layer: 0
   m_Name: Character
   m_TagString: Character
@@ -59,7 +60,7 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
@@ -82,7 +83,18 @@ MonoBehaviour:
   maxSpeed: 6
   acceleration: 20
   rotXSec: 2
-  maxSlope: 30
+--- !u!114 &6968225451657145166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139278267771143516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e02f44cb337359247b1251485c3d927a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1139278267968806024
 MonoBehaviour:
   m_ObjectHideFlags: 0
