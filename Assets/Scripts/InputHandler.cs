@@ -13,6 +13,7 @@ public class InputHandler : MonoBehaviour
     private Vector2 mCamMov;
     private Vector2 jCamMov;
     private bool jump;
+    private bool clear;
 
     // Start is called before the first frame update
     void Start()
@@ -21,11 +22,17 @@ public class InputHandler : MonoBehaviour
         mCamMov = Vector2.zero;
         jCamMov = Vector2.zero;
         jump = false;
+        clear = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        // clear the input buffers
+        if (clear) {
+            clear = false;
+            jump = false;
+        }
         /* character movement */
         mov.x = Input.GetAxis("Horizontal");
         mov.y = Input.GetAxis("Vertical");
@@ -58,8 +65,12 @@ public class InputHandler : MonoBehaviour
         jCamMov.x += Mathf.Clamp(jcMovDiff.x, -jcClamp.x, jcClamp.x);
         jCamMov.y += Mathf.Clamp(jcMovDiff.y, -jcClamp.y, jcClamp.y);
         /* jump */
-        jump = Input.GetButtonDown("Jump");
+        jump = Input.GetButtonDown("Jump") ? true : jump;
 
+    }
+    private void FixedUpdate() {
+        // clear the input buffer
+        clear = true;
     }
 
     public bool getJump() {

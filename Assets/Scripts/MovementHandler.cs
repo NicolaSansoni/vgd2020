@@ -36,27 +36,14 @@ public class MovementHandler : MonoBehaviour
         isGrounded = false;
     }
 
-    private void Update()
-    {
-        movInput.x = input.getMovement().x;
-        movInput.z = input.getMovement().y;
-
-        if (input.getJump())
-        {
-            jmpInput = true;
-        }
-
-        // keep char facing forward when moving, smooth the rotation
-        if (planeVel.magnitude > 0.1f)
-        {
-            Quaternion fwdRot = Quaternion.LookRotation(planeVel, -Physics.gravity);
-            fwdRot = Quaternion.RotateTowards(transform.rotation, fwdRot, 360f * rotXSec * Time.deltaTime);
-            transform.rotation = fwdRot;
-        }
-    }
-
     void FixedUpdate()
     {
+        /* get inputs */
+        movInput.x = input.getMovement().x;
+        movInput.z = input.getMovement().y;
+        jmpInput = input.getJump();
+
+        /* movement */
         planeVel = Vector3.ProjectOnPlane(rb.velocity, -Physics.gravity);
         Vector3 groundVel = Vector3.ProjectOnPlane(rb.velocity, groundNormal);
         // align with the camera
@@ -86,13 +73,19 @@ public class MovementHandler : MonoBehaviour
         // apply
         rb.AddForce(accelVect, ForceMode.Acceleration);
 
-        if (jmpInput)
+        /* jump */
+        if (jmpInput && getGrounded())
         {
-            if (getGrounded())
-            {
-                Jump();
-            }
-            jmpInput = false;
+            Jump();
+        }
+
+        /* rotation */
+        if (planeVel.magnitude > 0.1f)
+        {
+            // keep char facing forward when moving, smooth the rotation
+            Quaternion charRot = Quaternion.LookRotation(planeVel, -Physics.gravity);
+            charRot = Quaternion.RotateTowards(transform.rotation, charRot, 360f * rotXSec * Time.fixedDeltaTime);
+            rb.MoveRotation(charRot);
         }
     }
 

@@ -21,7 +21,7 @@ public class CameraController : MonoBehaviour
         cam = GetComponentInChildren<Camera>();
     }
 
-    void Update()
+    private void LateUpdate()
     {
         // The camera doesn't need to be perfectly deterministic but needs to be
         // as smooth as possible so it is handled in Update, not in FixedUpdate
