@@ -40,27 +40,37 @@ public class MovementHandler : MonoBehaviour
 
     void FixedUpdate()
     {
-        Debug.DrawRay(transform.position, -gravity.get(), Color.green);
+        /* get frame of reference */
+        float fwdWeight = Vector3.Dot(pointOfView.forward, gravity.get());
+        float rightWeight = Vector3.Dot(pointOfView.right, gravity.get());
+        float upWeight = Vector3.Dot(pointOfView.up, gravity.get());
+
+        Vector3 fwdDir;
+        if (Mathf.Abs(fwdWeight) < Mathf.Abs(upWeight) || Mathf.Abs(fwdWeight) < Mathf.Abs(rightWeight)) {
+            fwdDir = Vector3.ProjectOnPlane(pointOfView.forward, groundNormal);
+        } else {
+            fwdDir = Vector3.ProjectOnPlane(pointOfView.up, groundNormal);
+        }
+        Vector3 rightDir;
+        if (Mathf.Abs(rightWeight) < Mathf.Abs(upWeight) || Mathf.Abs(rightWeight) < Mathf.Abs(fwdWeight)) {
+            rightDir = Vector3.ProjectOnPlane(pointOfView.right, groundNormal);
+        } else {
+            rightDir = Vector3.ProjectOnPlane(pointOfView.up, groundNormal);
+            rightDir *= Mathf.Sign(rightWeight);
+        }
+
         /* get inputs */
-        movInput.x = input.getMovement().x;
-        movInput.z = input.getMovement().y;
+        movInput = fwdDir * input.getMovement().y + rightDir * input.getMovement().x;
         jmpInput = input.getJump();
 
         /* movement */
         planeVel = Vector3.ProjectOnPlane(rb.velocity, -gravity.get());
         Vector3 groundVel = Vector3.ProjectOnPlane(rb.velocity, groundNormal);
-        // align with the camera
-        Vector3 movTarget = movInput;
-        Quaternion camUpRot = Quaternion.FromToRotation(pointOfView.up, Vector3.up);
-        Vector3 camFwd = camUpRot * pointOfView.forward;
-        Quaternion fwdRot = Quaternion.FromToRotation(Vector3.forward, camFwd);
-        Quaternion upRot = Quaternion.FromToRotation(Vector3.up, groundNormal);
-        movTarget = upRot * fwdRot * movTarget;
         // adjust for slopes
-        float verticalComponent = Vector3.Dot(movTarget, -gravity.get().normalized);
-        movTarget -= movTarget * verticalComponent;
+        float verticalComponent = Vector3.Dot(movInput, -gravity.get().normalized);
+        movInput -= movInput * verticalComponent;
         // difference between desired actual and velocity
-        Vector3 velDiff = movTarget * maxSpeed - groundVel;
+        Vector3 velDiff = movInput * maxSpeed - groundVel;
         // clamp instead of normalize to handle standing still correctly
         Vector3 accelVect = Vector3.ClampMagnitude(velDiff, 1f) * acceleration;
         // Stop sticking to walls

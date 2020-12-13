@@ -42,13 +42,6 @@ public class CameraController : MonoBehaviour
         }
         xAxis.Normalize();
 
-        /* align input */
-        float rotInputAngle = Vector3.SignedAngle(xAxis, transform.right, transform.forward) * Mathf.Deg2Rad;
-        rotInput = new Vector2(
-            rotInput.x * Mathf.Cos(rotInputAngle) - rotInput.y * Mathf.Sin(rotInputAngle),
-            rotInput.x * Mathf.Sin(rotInputAngle) + rotInput.y * Mathf.Cos(rotInputAngle) 
-        );
-
         /* pitch */
         float pitch = Vector3.SignedAngle(yAxis, transform.forward, xAxis);
         if (Mathf.Approximately(pitch % 180f, 0)) {
